@@ -90,12 +90,6 @@ def main(args):
 
     rip = int(rip_string, 16)
 
-    if rip < 0x2000200000:
-      continue
-
-    rip -= 0x2000200000
-    #print(hex(rip))
-
     if rip in rip_hash:
       rip_hash[rip] += 1
     else:
@@ -109,7 +103,7 @@ def main(args):
 
   for i in rip_hash:
     with open(os.devnull, 'w') as devnull:
-      tmp = subprocess.check_output("addr2line --demangle -p -s -f -e "+ filename + " " + hex(i), shell=True, stderr=devnull).rstrip()
+      tmp = subprocess.check_output("llvm-addr2line -p -s -f -e "+ filename + " " + hex(i), shell=True, stderr=devnull, encoding='utf-8').rstrip()
 
     if tmp in rip_hash_name:
       rip_hash_name[tmp] += rip_hash[i]
